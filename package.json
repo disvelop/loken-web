@@ -29,7 +29,9 @@
   "dependencies": {
     "modern-normalize": "^0.4.0",
     "preact": "^8.2.6",
+    "preact-cli-lodash": "^1.1.0",
     "preact-compat": "^3.17.0",
+    "preact-feather": "^2.0.1",
     "preact-router": "^2.5.7",
     "roughjs": "^2.0.0",
     "workly": "^1.0.1"

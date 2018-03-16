@@ -1,18 +1,41 @@
 import { h, Component } from 'preact';
-import style from './style';
+import ZapIcon from 'preact-feather/dist/icons/zap';
+import { isEmpty } from 'lodash';
 import { REGIONS, REALMS } from './data';
+import style from './style';
 
 export default class Search extends Component {
+	state = {
+		region: REGIONS[0].slug,
+		realm: REALMS[0].slug,
+		character: null
+	};
+
+	shouldComponentUpdate() {
+		return false;
+	}
+
 	onRegion = e => {
-		console.debug(e);
+		const value = this._getSelectedValue(e);
+		this.setState({ region: value });
 	};
 
 	onRealm = e => {
-		console.debug(e);
+		const value = this._getSelectedValue(e);
+		this.setState({ realm: value });
+	};
+
+	onInput = e => {
+		const { target: { value } } = e;
+		this.setState({ character: value });
 	};
 
 	onQuery = e => {
-		console.debug(e);
+		const { region, realm, character } = this.state;
+		if (isEmpty(character)) {
+			throw Error('hah');
+		}
+		console.debug(this.state);
 	};
 
 	render() {
@@ -24,9 +47,17 @@ export default class Search extends Component {
 				<select onChange={this.onRealm}>
 					{REALMS.map(r => <option value={r.slug}>{r.name}</option>)}
 				</select>
-				<input type="search" placeholder="Character name" autocomplete="off" />
-				<button onClick={this.onQuery}>Go</button>
+				<input onInput={this.onInput} type="search" placeholder="Character name" autocomplete="off" />
+				<button onClick={this.onQuery}>
+					<ZapIcon />
+				</button>			
 			</div>
 		);
+	}
+
+	_getSelectedValue(event) {
+		const { target: { selectedOptions } } = event;
+		const [option] = selectedOptions;
+		return option.value;
 	}
 }
