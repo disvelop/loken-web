@@ -27,9 +27,12 @@
     "preact-render-spy": "^1.2.1"
   },
   "dependencies": {
+    "modern-normalize": "^0.4.0",
     "preact": "^8.2.6",
     "preact-compat": "^3.17.0",
-    "preact-router": "^2.5.7"
+    "preact-router": "^2.5.7",
+    "roughjs": "^2.0.0",
+    "workly": "^1.0.1"
   },
   "jest": {
     "verbose": true,
