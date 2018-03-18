@@ -24,9 +24,9 @@ export default class Profile extends Component {
 
   async _getProfileData() {
     const { region, realm, character } = this.props;
-    const endpoint = `https://loken-api.herokuapp.com/v1/analyser/${region}/${realm}/${character}`
+    const endpoint = `https://loken-api.herokuapp.com/v1/analyser/${region}/${realm}/${character}`;
     const response = await fetch(endpoint);
     const data = await response.json();
-    this.setState({ profile: data, isLoadingData: false })
+    this.setState({ profile: data, isLoadingData: false });
   }
 }

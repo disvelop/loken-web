@@ -9,10 +9,16 @@
     "serve": "preact build && preact serve",
     "dev": "preact watch",
     "lint": "eslint src",
-    "test": "jest ./tests"
+    "test": "jest ./tests",
+    "deploy": "yarn lint && yarn test && yarn build --no-prerender && cp build/index.html build/200.html && surge -d loken.disvelop.net build"
   },
   "eslintConfig": {
-    "extends": "eslint-config-synacor"
+    "extends": "eslint-config-synacor",
+    "rules": {
+      "indent": ["error", 2],
+      "react/jsx-indent-props": "off",
+      "react/sort-comp": "off"
+    }
   },
   "eslintIgnore": [
     "build/*"

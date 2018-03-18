@@ -8,7 +8,7 @@ export class LocalCache {
     expiry.setTime(expiry.getTime() + (expiryTime * 60 * 60 * 1000));
 
     const object = { expiry, data };
-		localStorage.setItem(`loken:${key}`, JSON.stringify(object));
+    localStorage.setItem(`loken:${key}`, JSON.stringify(object));
   }
   
   static get(key) {
