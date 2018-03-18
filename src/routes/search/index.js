@@ -1,4 +1,5 @@
 import { h, Component } from 'preact';
+import { route } from 'preact-router';
 import SearchIcon from 'preact-feather/dist/icons/search';
 import { isEmpty, lowerCase } from 'lodash';
 import { LocalCache } from '../../utils/local-cache';
@@ -36,10 +37,7 @@ export default class Search extends Component {
 
 	onQuery = e => {
 		const { region, realm, character } = this.state;
-		if (isEmpty(character)) {
-			throw Error('hah');
-		}
-		console.debug(this.state);
+		route(`/${region}/${realm}/${character}`, false);
 	};
 
 	render() {
@@ -58,12 +56,16 @@ export default class Search extends Component {
 				<input
 					onInput={this.onInput}
 					disabled={this.state.isLoadingRealms}
+					value={this.state.character}
 					type="search"
 					placeholder="Character name"
 					autocomplete="off"
 				/>
-				<button onClick={this.onQuery} disabled={this.state.isLoadingRealms}>
-					<SearchIcon />
+				<button
+					onClick={this.onQuery}
+					disabled={this.state.isLoadingRealms || isEmpty(this.state.character)}
+				>
+					<SearchIcon size={18} />
 				</button>			
 			</div>
 		);
