@@ -1,23 +1,27 @@
 import { h, Component } from 'preact';
-import ZapIcon from 'preact-feather/dist/icons/zap';
-import { isEmpty } from 'lodash';
-import { REGIONS, REALMS } from './data';
+import SearchIcon from 'preact-feather/dist/icons/search';
+import { isEmpty, lowerCase } from 'lodash';
+import { LocalCache } from '../../utils/local-cache';
+import { REGIONS } from './regions';
 import style from './style';
 
 export default class Search extends Component {
 	state = {
-		region: REGIONS[0].slug,
-		realm: REALMS[0].slug,
-		character: null
+		realms: [],
+		region: lowerCase(REGIONS[0]),
+		realm: null,
+		character: null,
+		isLoadingRealms: false,
 	};
 
-	shouldComponentUpdate() {
-		return false;
+	componentDidMount() {
+		this._getRealms();
 	}
 
 	onRegion = e => {
 		const value = this._getSelectedValue(e);
-		this.setState({ region: value });
+		this.setState({ region: lowerCase(value) });
+		this._getRealms();
 	};
 
 	onRealm = e => {
@@ -42,14 +46,24 @@ export default class Search extends Component {
 		return (
 			<div class={style.search}>
 				<select onChange={this.onRegion}>
-					{REGIONS.map(r => <option value={r.slug}>{r.name}</option>)}
+					{REGIONS.map(r => <option value={r}>{r}</option>)}
 				</select>
-				<select onChange={this.onRealm}>
-					{REALMS.map(r => <option value={r.slug}>{r.name}</option>)}
-				</select>
-				<input onInput={this.onInput} type="search" placeholder="Character name" autocomplete="off" />
-				<button onClick={this.onQuery}>
-					<ZapIcon />
+				{this.state.isLoadingRealms ? (
+					<div />
+				) : (
+					<select onChange={this.onRealm}>
+						{this.state.realms.map(r => <option value={r.slug}>{r.name}</option>)}
+					</select>
+				)}
+				<input
+					onInput={this.onInput}
+					disabled={this.state.isLoadingRealms}
+					type="search"
+					placeholder="Character name"
+					autocomplete="off"
+				/>
+				<button onClick={this.onQuery} disabled={this.state.isLoadingRealms}>
+					<SearchIcon />
 				</button>			
 			</div>
 		);
@@ -59,5 +73,23 @@ export default class Search extends Component {
 		const { target: { selectedOptions } } = event;
 		const [option] = selectedOptions;
 		return option.value;
+	}
+
+	async _getRealms() {
+		this.setState({ isLoadingRealms: true });
+		const region = lowerCase(this.state.region);
+
+		let realms = LocalCache.get(region);
+		let shouldCache = false;
+		if (!realms) {
+			const endpoint = `https://loken-api.herokuapp.com/v1/wow/realms/${region}`;
+			const response = await fetch(endpoint);
+			realms = await response.json();
+			shouldCache = true;
+		}
+
+		this.setState({ realms, realm: realms[0].slug, isLoadingRealms: false }, () => {
+			if (shouldCache) { LocalCache.set(region, realms); }
+		});
 	}
 }
